@@ -1,22 +1,32 @@
+const express = require('express')
 const mineflayer = require('mineflayer')
 
-const bot = mineflayer.createBot({
-  host: 'creepersenclave.progamer.me', // replace
-  port: 39059,            // change if needed
-  username: 'Steve'      // bot name
-})
+const app = express()
+const port = process.env.PORT || 4000
 
-bot.on('spawn', () => {
-  console.log('Bot joined the server!')
-})
+function createBot() {
+  const bot = mineflayer.createBot({
+    host: 'creepersenclave.progamer.me',
+    port: 39059,
+    username: 'Steve'
+  })
 
-bot.on('chat', (username, message) => {
-  if (username === bot.username) return
+  bot.on('spawn', () => console.log('Bot joined!'))
 
-  if (message === 'ping') {
-    bot.chat('pong')
-  }
-})
+  bot.on('chat', (username, message) => {
+    if (username === bot.username) return
+    if (message === 'ping') bot.chat('pong')
+  })
 
-bot.on('kicked', console.log)
-bot.on('error', console.log)
+  bot.on('end', () => {
+    console.log('Disconnected. Reconnecting...')
+    setTimeout(createBot, 5000)
+  })
+
+  bot.on('error', console.log)
+}
+
+createBot()
+
+app.get('/', (req, res) => res.send('Bot is running'))
+app.listen(port, () => console.log(`Web server on ${port}`))
