@@ -1,7 +1,20 @@
+const express = require('express')
 const mineflayer = require('mineflayer')
 
+const app = express()
+const PORT = process.env.PORT || 3000
+
+// Keep-alive web server (Render needs this)
+app.get('/', (req, res) => {
+  res.send('Bot alive')
+})
+
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Web server running on ${PORT}`)
+})
+
 function createBot() {
-  const PASSWORD = 'Steve123' // change this
+  const PASSWORD = 'Steve123'
 
   const bot = mineflayer.createBot({
     host: 'creepersenclave.progamer.me',
